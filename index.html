@@ -3,33 +3,54 @@
 
 <head>
 
-	<meta charset="utf-8">
-	<!-- <base href="/"> -->
+    <meta charset="utf-8">
+    <!-- <base href="/"> -->
 
-	<title>"2048" puzzle game by Usman Ahriev</title>
-	<meta name="description" content="">
+    <title>"2048" puzzle game by Usman Ahriev</title>
+    <meta name="description" content="">
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	
-	<!-- Template Basic Images Start -->
-	<meta property="og:image" content="path/to/image.jpg">
-	<link rel="icon" href="img/favicon/favicon.ico">
-	<!-- Template Basic Images End -->
-	
-	<!-- Custom Browsers Color Start -->
-	<meta name="theme-color" content="#000">
-	<!-- Custom Browsers Color End -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-	<link rel="stylesheet" href="css/main.min.css">
+    <!-- Template Basic Images Start -->
+    <meta property="og:image" content="path/to/image.jpg">
+    <link rel="icon" href="img/favicon/favicon.ico">
+    <!-- Template Basic Images End -->
+
+    <!-- Custom Browsers Color Start -->
+    <meta name="theme-color" content="#000">
+    <!-- Custom Browsers Color End -->
+
+    <link rel="stylesheet" href="css/main.min.css">
 
 </head>
 
 <body>
 
+<div class="content-wrap">
+    <canvas id="canvas"></canvas>
+    <div class="container">
+			<span>
+				<input type="button" value="3" class="index">
+				<input type="button" value="4" class="index">
+				<input type="button" value="5" class="index">
+				<input type="button" value="6" class="index">
+				<input type="button" value="7" class="index">
+				<input type="button" value="8" class="index">
+			</span>
+        <svg viewBox="0 0 100 100">
+            <path
+                    d="m 7.1428558,49.999998 c -1e-7,-23.669348 19.1877962,-42.8571447 42.8571442,-42.8571446 23.669347,0 42.857144,19.1877966 42.857144,42.8571446"/>
+        </svg>
+        <svg viewBox="0 0 100 100">
+            <path
+                    d="m 7.1428558,49.999998 c -1e-7,23.669347 19.1877962,42.857144 42.8571442,42.857144 23.669347,0 42.857144,-19.187797 42.857144,-42.857144"/>
+        </svg>
+    </div>
+    <button id="start">Start game</button>
+</div>
 
-
-	<script src="js/scripts.min.js"></script>
+<script src="js/scripts.min.js"></script>
 
 </body>
 </html>
