@@ -11,7 +11,7 @@ indexItems.forEach((index, i) => {
         indexItems[i].classList.add('selected-size');
         selectedBlockAmount = Number(document.querySelector('.selected-size').value);
 
-        staticBlock.cells = [
+        staticBlock.allCells = [
             {
                 x: canv.borderSize,
                 y: canv.borderSize
@@ -39,30 +39,27 @@ let canv = {
     borderSize: 5,
 };
 
-const ctx = canvas.getContext("2d");
+const CTX = canv.obj.getContext("2d");
 
 canv.obj.width = canv.width;
 canv.obj.height = canv.height;
 
-function Block() {
+function Square() {}
 
-}
-
-Block.prototype = {
+Square.prototype = {
     size: Math.round((canv.width - canv.borderSize * (selectedBlockAmount + 1)) / selectedBlockAmount),
     directionArray: [],
-    cells: [
+    allCells: [
         {
             x: canv.borderSize,
             y: canv.borderSize,
-            value: null
+            value: null,
+            valueCoordinateX: null,
+            valueCoordinateY: null
         }
     ],
-    centeringNumbers: [],
-    numbers: [],
     numberSize: "30px",
-    numberBlocksCoordinates: [],
-    numberBlocksBackgroundColors: {
+    numberCellBackgroundColors: {
         2: "#eee4da",
         4: "#ece0c7",
         8: "#f2b179",
@@ -74,7 +71,8 @@ Block.prototype = {
         512: "#ecc657",
         1024: "#eec53d",
         2048: "#eec22e",
-        larger: "#3d3a33"
+        larger: "#3d3a33",
+        null: "#d6cdc4"
     },
     sizeCalculation: function () {
         switch (selectedBlockAmount) {
@@ -104,103 +102,75 @@ Block.prototype = {
     staticBlocksCoordinatesRecord: function () {
         let blockX, blockY = canv.borderSize;
 
-        for (let i = 0; i < selectedBlockAmount; i++) {
+        for (let y = 0; y < selectedBlockAmount; y++) {
+
             blockX = canv.borderSize;
-            for (let j = 0; j < selectedBlockAmount; j++) {
-                if (j === 0) {
+
+            for (let x = 0; x < selectedBlockAmount; x++) {
+                if (x === 0) {
                     blockX = canv.borderSize;
                 } else {
-                    blockX = this.cells[j].x + this.size + canv.borderSize;
+                    blockX = this.allCells[x].x + this.size + canv.borderSize;
                 }
 
-                this.cells.push({
+                this.allCells.push({
                     x: blockX,
-                    y: blockY
+                    y: blockY,
+                    value: null,
+                    valueCoordinateX: null,
+                    valueCoordinateY: null
                 });
             }
-            blockY = this.cells[this.cells.length - 1].y + this.size + canv.borderSize;
+            blockY = this.allCells[this.allCells.length - 1].y + this.size + canv.borderSize;
         }
-        this.cells.shift();
+        this.allCells.shift();
     },
     centeringNumberCoordinatesRecord: function () {
         let centerX, centerY;
-        if (this.centeringNumbers.length < this.numbers.length) {
-            for (let i = 0; i < this.numbers.length; i++) {
-                centerX = this.numberBlocksCoordinates[i].x + Math.round(this.size / 2);
-                centerY = this.numberBlocksCoordinates[i].y + Math.round(this.size / 2);
+
+        for (let i = 0; i < this.allCells.length; i++) {
+
+            if (this.allCells[i].value) {
+                centerX = 200;
+                centerY = 200;
+                this.allCells[i].valueCoordinateX = centerX;
+                this.allCells[i].valueCoordinateY = centerY;
             }
-            this.centeringNumbers.push({
-                x: centerX,
-                y: centerY
-            })
         }
     },
-    allNumberCoordinatesRecord: function () {
-        let centerX, centerY;
+    // allNumberCoordinatesRecord: function () {
+    //     let centerX, centerY;
+    //
+    //     for (let i = 0; i < this.numbers.length; i++) {
+    //         centerX = this.numberBlocksCoordinates[i].x + Math.round(this.size / 2);
+    //         centerY = this.numberBlocksCoordinates[i].y + Math.round(this.size / 2);
+    //         this.centeringNumbers.push({
+    //             x: centerX,
+    //             y: centerY
+    //         })
+    //     }
+    // },
+    createValueCell: function () {
+        let randomCoordinates = Math.round(Math.random() * (this.allCells.length - 1));
 
-        for (let i = 0; i < this.numbers.length; i++) {
-            centerX = this.numberBlocksCoordinates[i].x + Math.round(this.size / 2);
-            centerY = this.numberBlocksCoordinates[i].y + Math.round(this.size / 2);
-            this.centeringNumbers.push({
-                x: centerX,
-                y: centerY
-            })
-        }
-    },
-    createBlock: function () {
-        let randomCoordinates = Math.round(Math.random() * (this.cells.length - 1));
-
-        if (this.numbers.length < this.cells.length) {
-            let int = false;
-
-            for (let i = 0; i < this.numberBlocksCoordinates.length; i++) {
-                if (this.cells[randomCoordinates] === this.numberBlocksCoordinates[i]) {
-                    int = true;
-                    break;
-                }
-            }
-            if (int) {
-                this.createBlock();
-            } else {
-                this.numbers.push(2);
-                this.numberBlocksCoordinates.push(
-                    this.cells[randomCoordinates]
-                );
-            }
-        }
+        this.allCells[randomCoordinates].value = 2;
     },
     move: function () {
-        let moveX, moveY;
 
-
-        if (this.directionArray[0] === "right") {
-            for (let i = 0; i < this.cells.length; i++) {
-
-            }
-            this.numberBlocksCoordinates[0].y
-        }
-        this.numberBlocksCoordinates[0].x = this.cells[0].x;
-        this.numberBlocksCoordinates[0].y = this.cells[0].y;
-        this.centeringNumbers.pop();
-        this.centeringNumberCoordinatesRecord();
-
-
-        this.createBlock();
     }
-
 };
 //Not sure if constructor needs to be restored
-Object.defineProperty(Block.prototype, "constructor", {
+Object.defineProperty(Square.prototype, "constructor", {
     enumerable: false,
-    value: Block
+    value: Square
 });
 
-let staticBlock = new Block();
+let staticBlock = new Square();
 
 staticBlock.staticBlocksCoordinatesRecord();
 
-let blocksWithNumbers = new Block();
-blocksWithNumbers.createBlock();
+let blocksWithNumbers = new Square();
+blocksWithNumbers.createValueCell();
 
 function fas(event) {
     let cutKeyCode = event.code.substr(5).toLowerCase();
@@ -228,54 +198,58 @@ function canvasRadius(x, y, w, h, rad) {
     let r = x + w,
         b = y + h;
 
-    ctx.beginPath();
-    ctx.moveTo(x + rad, y);
-    ctx.lineTo(r - (rad), y);
-    ctx.quadraticCurveTo(r, y, r, y + rad);
-    ctx.lineTo(r, b - rad);
-    ctx.quadraticCurveTo(r, b, r - rad, b);
-    ctx.lineTo(x + rad, b);
-    ctx.quadraticCurveTo(x, b, x, b - rad);
-    ctx.lineTo(x, y + rad);
-    ctx.quadraticCurveTo(x, y, x + rad, y);
-    ctx.fill();
+    CTX.beginPath();
+    CTX.moveTo(x + rad, y);
+    CTX.lineTo(r - (rad), y);
+    CTX.quadraticCurveTo(r, y, r, y + rad);
+    CTX.lineTo(r, b - rad);
+    CTX.quadraticCurveTo(r, b, r - rad, b);
+    CTX.lineTo(x + rad, b);
+    CTX.quadraticCurveTo(x, b, x, b - rad);
+    CTX.lineTo(x, y + rad);
+    CTX.quadraticCurveTo(x, y, x + rad, y);
+    CTX.fill();
 }
 
 function drawGame() {
-    ctx.fillStyle = "#bbada0";
-    ctx.fillRect(0, 0, canv.width, canv.height);
+    CTX.fillStyle = "#bbada0";
+    CTX.fillRect(0, 0, canv.width, canv.height);
 
-    for (let i = 0; i < staticBlock.cells.length; i++) {
-        ctx.fillStyle = "#d6cdc4";
-        canvasRadius(staticBlock.cells[i].x, staticBlock.cells[i].y, staticBlock.size, staticBlock.size, 5);
+    for (let i = 0; i < staticBlock.allCells.length; i++) {
+        CTX.fillStyle = "#d6cdc4";
+        canvasRadius(staticBlock.allCells[i].x, staticBlock.allCells[i].y, staticBlock.size, staticBlock.size, 5);
     }
 
-    for (let i = 0; i < blocksWithNumbers.numbers.length; i++) {
-        if (blocksWithNumbers.numbers[i] <= "2048") {
-            ctx.fillStyle = blocksWithNumbers.numberBlocksBackgroundColors[blocksWithNumbers.numbers[i]];
+    for (let i = 0; i < blocksWithNumbers.allCells.length; i++) {
+        if (blocksWithNumbers.allCells[i].value <= 2048 || blocksWithNumbers.allCells[i].value === null) {
+            CTX.fillStyle = blocksWithNumbers.numberCellBackgroundColors[blocksWithNumbers.allCells[i].value];
         } else {
-            ctx.fillStyle = blocksWithNumbers.numberBlocksBackgroundColors.larger;
+            CTX.fillStyle = blocksWithNumbers.numberCellBackgroundColors.larger;
         }
-        canvasRadius(blocksWithNumbers.numberBlocksCoordinates[i].x, blocksWithNumbers.numberBlocksCoordinates[i].y, blocksWithNumbers.size, blocksWithNumbers.size, 5);
+        //canvasRadius(blocksWithNumbers.allCells[i].x, blocksWithNumbers.allCells[i].y, blocksWithNumbers.size, blocksWithNumbers.size, 5);
     }
 
 
-    for (let i = 0; i < blocksWithNumbers.numbers.length; i++) {
-        if (blocksWithNumbers.numbers[i] === 2 || blocksWithNumbers.numbers[i] === 4) {
-            ctx.fillStyle = "#726763";
+    for (let i = 0; i < blocksWithNumbers.allCells.length; i++) {
+        if (blocksWithNumbers.allCells[i].value === 2 || blocksWithNumbers.allCells[i].value === 4) {
+            CTX.fillStyle = "#726763";
         } else {
-            ctx.fillStyle = "#ffffff";
+            CTX.fillStyle = "#ffffff";
         }
     }
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.font = blocksWithNumbers.numberSize + " Arial";
-    if (blocksWithNumbers.numbers[0]) {
-        blocksWithNumbers.centeringNumberCoordinatesRecord();
-        for (let i = 0; i < blocksWithNumbers.centeringNumbers.length; i++) {
-            ctx.fillText(blocksWithNumbers.numbers[i], blocksWithNumbers.centeringNumbers[i].x, blocksWithNumbers.centeringNumbers[i].y);
-        }
-    }
+    CTX.textAlign = "center";
+    CTX.textBaseline = "middle";
+    CTX.font = blocksWithNumbers.numberSize + " Arial";
+    // for (let i = 0; i < blocksWithNumbers.allCells.length; i++) {
+    //     if (blocksWithNumbers.allCells[i].value) {
+    //         console.log('yes')
+    //         blocksWithNumbers.centeringNumberCoordinatesRecord();
+    //         for (let j = 0; i < blocksWithNumbers.allCells.length; i++) {
+    //             CTX.fillText(blocksWithNumbers.allCells[j].value, blocksWithNumbers.allCells[j].valueCoordinateX, blocksWithNumbers.allCells[j].valueCoordinateY);
+    //         }
+    //     }
+    // }
+
 }
 
 setInterval(drawGame, 50);
