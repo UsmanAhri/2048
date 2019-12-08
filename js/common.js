@@ -142,12 +142,14 @@ Square.prototype = {
         }
     },
     createValueCell: function () {
-        function create() {
+        let randomNumber = Math.round(Math.random() * (this.allCells.length - 1));
 
+        if (this.allCells[randomNumber].value !== null) {
+            this.createValueCell();
         }
-        let randomCoordinates = Math.round(Math.random() * (this.allCells.length - 1));
-
-        this.allCells[randomCoordinates].value = 2;
+        else {
+            this.allCells[randomNumber].value = 2;
+        }
     },
     move: function () {
 
