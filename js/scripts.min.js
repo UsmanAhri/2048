@@ -2,6 +2,8 @@ let selectedBlockAmount = Number(document.querySelector('.selected-size').value)
 
 const c = document.querySelector('.container');
 const indexItems = document.querySelectorAll('.index');
+let startButton = document.getElementById('start');
+
 let cur = -1;
 indexItems.forEach((index, i) => {
     index.addEventListener('click', () => {
@@ -11,14 +13,14 @@ indexItems.forEach((index, i) => {
         indexItems[i].classList.add('selected-size');
         selectedBlockAmount = Number(document.querySelector('.selected-size').value);
 
-        staticBlock.allCells = [
+        cell.allCells = [
             {
                 x: canv.borderSize,
                 y: canv.borderSize
             }
         ];
-        staticBlock.sizeCalculation();
-        staticBlock.staticBlocksCoordinatesRecord();
+        cell.sizeCalculation();
+        cell.cellsCoordinatesRecord();
 
         c.className = 'container';
         void c.offsetWidth; // Reflow
@@ -99,7 +101,7 @@ Square.prototype = {
         }
         return this.size;
     },
-    staticBlocksCoordinatesRecord: function () {
+    cellsCoordinatesRecord: function () {
         let blockX, blockY = canv.borderSize;
 
         for (let y = 0; y < selectedBlockAmount; y++) {
@@ -125,32 +127,24 @@ Square.prototype = {
         }
         this.allCells.shift();
     },
-    centeringNumberCoordinatesRecord: function () {
+    numbersCoordinatesRecord: function () {
         let centerX, centerY;
 
         for (let i = 0; i < this.allCells.length; i++) {
+            if (this.allCells[i].value !== null) {
+                centerX = this.allCells[i].x + (this.size / 2);
+                centerY = this.allCells[i].y + (this.size / 2);
 
-            if (this.allCells[i].value) {
-                centerX = 200;
-                centerY = 200;
                 this.allCells[i].valueCoordinateX = centerX;
                 this.allCells[i].valueCoordinateY = centerY;
+
             }
         }
     },
-    // allNumberCoordinatesRecord: function () {
-    //     let centerX, centerY;
-    //
-    //     for (let i = 0; i < this.numbers.length; i++) {
-    //         centerX = this.numberBlocksCoordinates[i].x + Math.round(this.size / 2);
-    //         centerY = this.numberBlocksCoordinates[i].y + Math.round(this.size / 2);
-    //         this.centeringNumbers.push({
-    //             x: centerX,
-    //             y: centerY
-    //         })
-    //     }
-    // },
     createValueCell: function () {
+        function create() {
+
+        }
         let randomCoordinates = Math.round(Math.random() * (this.allCells.length - 1));
 
         this.allCells[randomCoordinates].value = 2;
@@ -165,12 +159,14 @@ Object.defineProperty(Square.prototype, "constructor", {
     value: Square
 });
 
-let staticBlock = new Square();
+let cell = new Square();
 
-staticBlock.staticBlocksCoordinatesRecord();
+cell.cellsCoordinatesRecord();
 
-let blocksWithNumbers = new Square();
-blocksWithNumbers.createValueCell();
+startButton.addEventListener('click', function () {
+
+    cell.createValueCell();
+});
 
 function fas(event) {
     let cutKeyCode = event.code.substr(5).toLowerCase();
@@ -182,12 +178,12 @@ function fas(event) {
         cutKeyCode !== 'left'
     ) {
         return false;
-    } else if (cutKeyCode !== blocksWithNumbers.directionArray[0]) {
-        if (blocksWithNumbers.directionArray.length === 3) {
-            blocksWithNumbers.directionArray.pop();
+    } else if (cutKeyCode !== cell.directionArray[0]) {
+        if (cell.directionArray.length === 3) {
+            cell.directionArray.pop();
         }
-        blocksWithNumbers.directionArray.unshift(cutKeyCode);
-        blocksWithNumbers.move();
+        cell.directionArray.unshift(cutKeyCode);
+        cell.move();
     }
 }
 
@@ -215,41 +211,39 @@ function drawGame() {
     CTX.fillStyle = "#bbada0";
     CTX.fillRect(0, 0, canv.width, canv.height);
 
-    for (let i = 0; i < staticBlock.allCells.length; i++) {
-        CTX.fillStyle = "#d6cdc4";
-        canvasRadius(staticBlock.allCells[i].x, staticBlock.allCells[i].y, staticBlock.size, staticBlock.size, 5);
-    }
+    // for (let i = 0; i < cell.allCells.length; i++) {
+    //     CTX.fillStyle = "#d6cdc4";
+    //     canvasRadius(cell.allCells[i].x, cell.allCells[i].y, cell.size, cell.size, 5);
+    // }
 
-    for (let i = 0; i < blocksWithNumbers.allCells.length; i++) {
-        if (blocksWithNumbers.allCells[i].value <= 2048 || blocksWithNumbers.allCells[i].value === null) {
-            CTX.fillStyle = blocksWithNumbers.numberCellBackgroundColors[blocksWithNumbers.allCells[i].value];
+    CTX.textAlign = "center";
+    CTX.textBaseline = "middle";
+    CTX.font = cell.numberSize + " Arial";
+    for (let i = 0; i < cell.allCells.length; i++) {
+        if (cell.allCells[i].value <= 2048 || cell.allCells[i].value === null) {
+            CTX.fillStyle = cell.numberCellBackgroundColors[cell.allCells[i].value];
         } else {
-            CTX.fillStyle = blocksWithNumbers.numberCellBackgroundColors.larger;
+            CTX.fillStyle = cell.numberCellBackgroundColors.larger;
         }
-        //canvasRadius(blocksWithNumbers.allCells[i].x, blocksWithNumbers.allCells[i].y, blocksWithNumbers.size, blocksWithNumbers.size, 5);
-    }
+        canvasRadius(cell.allCells[i].x, cell.allCells[i].y, cell.size, cell.size, 5);
 
-
-    for (let i = 0; i < blocksWithNumbers.allCells.length; i++) {
-        if (blocksWithNumbers.allCells[i].value === 2 || blocksWithNumbers.allCells[i].value === 4) {
+        if (cell.allCells[i].value === 2 || cell.allCells[i].value === 4) {
             CTX.fillStyle = "#726763";
         } else {
             CTX.fillStyle = "#ffffff";
         }
-    }
-    CTX.textAlign = "center";
-    CTX.textBaseline = "middle";
-    CTX.font = blocksWithNumbers.numberSize + " Arial";
-    // for (let i = 0; i < blocksWithNumbers.allCells.length; i++) {
-    //     if (blocksWithNumbers.allCells[i].value) {
-    //         console.log('yes')
-    //         blocksWithNumbers.centeringNumberCoordinatesRecord();
-    //         for (let j = 0; i < blocksWithNumbers.allCells.length; i++) {
-    //             CTX.fillText(blocksWithNumbers.allCells[j].value, blocksWithNumbers.allCells[j].valueCoordinateX, blocksWithNumbers.allCells[j].valueCoordinateY);
-    //         }
-    //     }
-    // }
 
+        // if (cell.allCells[i].value !== null) {
+        //     cell.numbersCoordinatesRecord();
+        //     for (let j = 0; i < cell.allCells.length; i++) {
+        //         CTX.fillText(cell.allCells[j].value, cell.allCells[j].valueCoordinateX, cell.allCells[j].valueCoordinateY);
+        //     }
+        // }
+        if (cell.allCells[i].value !== null) {
+            cell.numbersCoordinatesRecord();
+            CTX.fillText(cell.allCells[i].value, cell.allCells[i].valueCoordinateX, cell.allCells[i].valueCoordinateY)
+        }
+    }
 }
 
 setInterval(drawGame, 50);
